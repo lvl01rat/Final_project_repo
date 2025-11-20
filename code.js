@@ -2,6 +2,8 @@ import { Game } from "./states/game.js";
 import { GameOver } from "./states/gameOver.js";
 import { Title } from "./states/title.js";
 import { Toolbox } from "./toolbox.js";
+import { PipeObstacle } from "./pipeObstacle.js";
+import { Bird } from "./bird.js";
 
 let canvas = document.getElementById("myCanvas");
 let pencil = canvas.getContext("2d"); // This gives you the drawing context, like a pencil
@@ -11,6 +13,8 @@ let toolbox = new Toolbox();
 let game = new Game(canvas, pencil);
 let gameOver = new GameOver(canvas, pencil);
 let title = new Title(canvas, pencil);
+let bird = new Bird(canvas, pencil);
+let pipe = new PipeObstacle(canvas, pencil)
 
 let state = title;
 
