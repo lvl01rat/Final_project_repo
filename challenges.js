@@ -1,41 +1,54 @@
+import { TitleScreen } from "./titleScreen.js";
+import { GameOverScreen } from "./gameOver.js";
 import { PipeObstacle } from "./pipeObstacle.js";
 import { Bird } from "./bird.js";
 import { Star } from "./star.js";
 
 let canvas = document.getElementById("myCanvas");
-let pencil = canvas.getContext("2d"); // This gives you the drawing context, like a pencil
-
-
+let pencil = canvas.getContext("2d");
 
 let stars = [];
 for (let i = 0; i < 120; i++) {
     stars.push(new Star(canvas, pencil));
 }
 
+let titleScreen = new TitleScreen(canvas, pencil);
+let gameOverScreen = new GameOverScreen(canvas, pencil);
+let gameStarted = false;
+let gameOver = false;
+let highScore = localStorage.getItem("flappyHighScore") || 0;
 
 //function for resetting the game
 function resetGame() {
     console.log("resetting game")
-
     bird.x = 50;
     bird.y = 50;
-
+    score = 0;
     testPipe = new PipeObstacle(canvas, pencil);
 }
 
 function gameLoop() {
-    
     // Draw background
     pencil.clearRect(0, 0, canvas.width, canvas.height);
     pencil.drawImage(background, 0, 0, canvas.width, canvas.height);
 
-
-   stars.forEach(star => {
+    stars.forEach(star => {
         star.draw(pencil);
         star.move();
     });
 
-   
+    // Show title screen if game hasn't started
+    if (!gameStarted) {
+        titleScreen.draw();
+        return;
+    }
+
+    // Show game over screen if dead
+    if (gameOver) {
+        gameOverScreen.draw(score, highScore);
+        return;
+    }
+
     testPipe.move();
     testPipe.draw();
 
@@ -45,27 +58,23 @@ function gameLoop() {
     let wasHit = bird.isHitByPipe(testPipe);
     if(wasHit) {
         console.log("you're dead, comrade!");
-        score = -1
-        resetGame();
+        gameOver = true;
+        updateHighScore();
     }
 
      let getHit = bird.getsHitByPipe(testPipe);
     if(getHit) {
         console.log("you're dead, comrade!");
-        score = -1
-        resetGame();
-
-       
+        gameOver = true;
+        updateHighScore();
     } 
     
     if (bird.y <= 0 || bird.y + bird.height >= canvas.height) {
             console.log("No cheating, comrade!");
-            score = -1
-            resetGame();
-        }
-    
+            gameOver = true;
+            updateHighScore();
+    }
 }
-
 
 setInterval(gameLoop, 50);
 
@@ -73,19 +82,52 @@ let score = 0;
 
 //score goes up every second
 function raiseScore() {
-    score += 1;
-    let scoreElement = document.getElementById("scoreDisplay");
-    scoreElement.innerHTML = "SCORE:" + score;
+    if (gameStarted && !gameOver) {
+        score += 1;
+        let scoreElement = document.getElementById("scoreDisplay");
+        scoreElement.innerHTML = "SCORE: " + score;
+    }
 }
 setInterval(raiseScore, 1000);
 
-function detectClick() {
-    bird.flap();
+// Update high score in localStorage
+function updateHighScore() {
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("flappyHighScore", highScore);
+    }
 }
 
-function detectKey() {
-    bird.flap();
+function detectClick(event) {
+    if (!gameStarted) {
+        if (titleScreen.handleClick(event)) {
+            gameStarted = true;
+        }
+    } else if (gameOver) {
+        if (gameOverScreen.handleClick(event)) {
+            gameOver = false;
+            resetGame();
+            gameStarted = true;
+        }
+    } else {
+        bird.flap();
+    }
+}
 
+function detectKey(event) {
+    if (!gameStarted) {
+        if (titleScreen.handleKey(event)) {
+            gameStarted = true;
+        }
+    } else if (gameOver) {
+        if (gameOverScreen.handleKey(event)) {
+            gameOver = false;
+            resetGame();
+            gameStarted = true;
+        }
+    } else {
+        bird.flap();
+    }
 }
 
 canvas.addEventListener("click", detectClick);
