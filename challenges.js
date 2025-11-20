@@ -1,8 +1,16 @@
 import { PipeObstacle } from "./pipeObstacle.js";
 import { Bird } from "./bird.js";
+import { Star } from "./star.js";
 
 let canvas = document.getElementById("myCanvas");
 let pencil = canvas.getContext("2d"); // This gives you the drawing context, like a pencil
+
+
+
+let stars = [];
+for (let i = 0; i < 120; i++) {
+    stars.push(new Star(canvas, pencil));
+}
 
 
 //function for resetting the game
@@ -22,7 +30,10 @@ function gameLoop() {
     pencil.drawImage(background, 0, 0, canvas.width, canvas.height);
 
 
-   
+   stars.forEach(star => {
+        star.draw(pencil);
+        star.move();
+    });
 
    
     testPipe.move();
