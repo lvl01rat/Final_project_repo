@@ -7,7 +7,7 @@ export class TitleScreen {
 
     draw() {
         // Clear canvas
-        this.pencil.fillStyle = "black";
+        this.pencil.fillStyle = "white";
         this.pencil.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         // Draw title text
