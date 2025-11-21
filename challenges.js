@@ -18,6 +18,14 @@ let gameStarted = false;
 let gameOver = false;
 let highScore = localStorage.getItem("flappyHighScore") || 0;
 
+PipeObstacle.otherObstaclePosition = testPipe.currentPositionIndex;
+newPipe.currentPositionIndex = Math.floor(Math.random() * 3);
+while (newPipe.currentPositionIndex === testPipe.currentPositionIndex) {
+    newPipe.currentPositionIndex = Math.floor(Math.random() * 3);
+}
+newPipe.y = newPipe.presetPositions[newPipe.currentPositionIndex];
+
+
 //function for resetting the game
 function resetGame() {
     console.log("resetting game")
@@ -25,6 +33,15 @@ function resetGame() {
     bird.y = 50;
     score = 0;
     testPipe = new PipeObstacle(canvas, pencil);
+    newPipe = new PipeObstacle(canvas, pencil);
+    newPipe.x = canvas.width + 400;
+
+     PipeObstacle.otherObstaclePosition = testPipe.currentPositionIndex;
+    newPipe.currentPositionIndex = Math.floor(Math.random() * 3);
+    while (newPipe.currentPositionIndex === testPipe.currentPositionIndex) {
+        newPipe.currentPositionIndex = Math.floor(Math.random() * 3);
+    }
+    newPipe.y = newPipe.presetPositions[newPipe.currentPositionIndex];
 }
 
 function gameLoop() {
@@ -37,13 +54,13 @@ function gameLoop() {
         star.move();
     });
 
-    // Show title screen if game hasn't started
+   
     if (!gameStarted) {
         titleScreen.draw();
         return;
     }
 
-    // Show game over screen if dead
+   
     if (gameOver) {
         gameOverScreen.draw(score, highScore);
         return;
@@ -52,17 +69,20 @@ function gameLoop() {
     testPipe.move();
     testPipe.draw();
 
-    bird.gravity();
+    newPipe.move();
+    newPipe.draw();
+
+    
     bird.draw();
 
-    let wasHit = bird.isHitByPipe(testPipe);
+    let wasHit = bird.isHitByPipe(testPipe, newPipe);
     if(wasHit) {
         console.log("you're dead, comrade!");
         gameOver = true;
         updateHighScore();
     }
 
-     let getHit = bird.getsHitByPipe(testPipe);
+     let getHit = bird.getsHitByPipe(testPipe, newPipe);
     if(getHit) {
         console.log("you're dead, comrade!");
         gameOver = true;
@@ -88,7 +108,7 @@ function raiseScore() {
         scoreElement.innerHTML = "SCORE: " + score;
     }
 }
-setInterval(raiseScore, 1000);
+setInterval(raiseScore, 50);
 
 // Update high score in localStorage
 function updateHighScore() {
@@ -109,8 +129,6 @@ function detectClick(event) {
             resetGame();
             gameStarted = true;
         }
-    } else {
-        bird.flap();
     }
 }
 
@@ -126,7 +144,11 @@ function detectKey(event) {
             gameStarted = true;
         }
     } else {
-        bird.flap();
+       if (event.key.toLowerCase() === 'w') {
+            bird.moveUp();
+        } else if (event.key.toLowerCase() === 's') {
+            bird.moveDown();
+        }
     }
 }
 
@@ -135,5 +157,8 @@ document.addEventListener("keypress", detectKey)
 
 let testPipe = new PipeObstacle(canvas, pencil);
 testPipe.draw();
+
+let newPipe = new PipeObstacle(canvas, pencil);
+newPipe.draw();
 
 let bird = new Bird(canvas, pencil);

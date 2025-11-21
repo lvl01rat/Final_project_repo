@@ -1,17 +1,18 @@
-//Uppercase p for the class name, lowercase for file name.
-//This class draws the pipe obstacle on the screen.
 export class PipeObstacle {
 
     x = 300;
     y = 100;
-    height; //height will be dynamic
-    width = 100;
+    width = 50;  
+    height = 50; 
     canvas;
     pencil;
     speed = 8;
-    gap = 150;
 
-    //pipe parts
+    
+    presetPositions = [];
+    currentPositionIndex = 0;
+
+    
     topPipeTopLeft;
     topPipeBottomRight;
     bottomPipeTopLeft;
@@ -21,65 +22,61 @@ export class PipeObstacle {
         this.pencil = pencil;
         this.canvas = canvas;
         this.image = new Image();
-        this.image.src = "sprites/trees.png"
-        this.height = canvas.height;
+        this.image.src = "sprites/trees.png"; 
+
+   
+        this.presetPositions = [
+            canvas.height / 4,           // Top
+            canvas.height / 2 - 25,      // Middle
+            (canvas.height * 3) / 4 - 50 // Bottom
+        ];
+
+        
+        this.currentPositionIndex = Math.floor(Math.random() * 3);
+        this.y = this.presetPositions[this.currentPositionIndex];
     }
 
     draw() {
+        
+        this.pencil.drawImage(
+            this.image,
+            this.x,
+            this.y,
+            this.width,
+            this.height
+        );
 
-        this.topPipeTopLeft = { 
-            x : this.x,
-            y : this.y - this.height
-        }
+   
+        this.topPipeTopLeft = {
+            x: this.x,
+            y: this.y
+        };
 
-        this.topPipeBottomRight = { 
-            x : this.x + this.width,
-            y : this.y - this.height + this.height
-        }
+        this.topPipeBottomRight = {
+            x: this.x + this.width,
+            y: this.y + this.height
+        };
 
         this.bottomPipeTopLeft = {
-            x : this.x,
-            y : this.y + this.gap
-        }
+            x: this.x,
+            y: this.y
+        };
 
         this.bottomPipeBottomRight = {
-            x : this.x + this.width,
-            y : this.y + this.gap + this.height
-        }
-
-
-        //top pipe
-        this.pencil.drawImage(
-        this.image,
-            this.x, 
-            this.y - this.height, 
-            this.width, 
-            this.height
-        ); // x, y, w, h
-
-        //bottom pipe
-        this.pencil.drawImage(
-        this.image,
-            this.x, 
-            this.y + this.gap, 
-            this.width, 
-            this.height
-        ); // x, y, w, h
+            x: this.x + this.width,
+            y: this.y + this.height
+        };
     }
 
     move() {
         this.x -= this.speed;
 
-        //check if we need to recycle
-        if(this.x < -this.width) {
+        // Recycle pipes when it goes off screen
+        if (this.x < -this.width) {
             this.x = this.canvas.width;
-            this.y = Math.random() * this.canvas.height;
+            // Pick a new random preset position
+            this.currentPositionIndex = Math.floor(Math.random() * 3);
+            this.y = this.presetPositions[this.currentPositionIndex];
         }
-
-
-
     }
-
-
-
 }

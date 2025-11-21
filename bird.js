@@ -7,12 +7,20 @@ export class Bird {
     canvas;
     pencil;
 
-    ySpeed = 1;
-    maximumYSpeed = 20;
+   presetPositions = [];
+    currentPositionIndex = 1;
 
     constructor(canvas, pencil) {
         this.canvas = canvas;
         this.pencil = pencil;
+
+        this.presetPositions = [
+            canvas.height / 4,           // Top position
+            canvas.height / 2 - 25,      // Middle position
+            (canvas.height * 3) / 4 - 50 // Bottom position
+        ];
+        
+        this.y = this.presetPositions[this.currentPositionIndex];
         this.image = new Image();
         this.image.src = "sprites/bird.webp"
     }
@@ -21,46 +29,59 @@ export class Bird {
       this.pencil.drawImage(this.image, this.x, this.y, this.width, this.height);
     }
 
-    flap() {
-        console.log("Flapped!")
-        this.ySpeed = -15;
-    }
-
-    gravity() {
-        this.y += this.ySpeed
-        this.ySpeed += 2;
-
-        if(this.ySpeed > this.maximumYSpeed) {
-            this.ySpeed = this.maximumYSpeed;
+  moveUp() {
+        if (this.currentPositionIndex > 0) {
+            this.currentPositionIndex--;
+            this.y = this.presetPositions[this.currentPositionIndex];
+            console.log("Moved up to position " + this.currentPositionIndex);
         }
-
     }
 
-    isHitByPipe(pipeObstacle) {
-        //this detects collisions for the top pipe
-        let isFarEnoughRight = this.x > pipeObstacle.topPipeTopLeft.x;
-        let isLowEnough = this.y > pipeObstacle.topPipeTopLeft.y;
-        let isFarEnoughLeft = this.x < pipeObstacle.topPipeBottomRight.x;
-        let isHighEnough = this.y < pipeObstacle.topPipeBottomRight.y;
+    moveDown() {
+        if (this.currentPositionIndex < this.presetPositions.length - 1) {
+            this.currentPositionIndex++;
+            this.y = this.presetPositions[this.currentPositionIndex];
+            console.log("Moved down to position " + this.currentPositionIndex);
+        }
+    }
 
-       if(isFarEnoughRight && isLowEnough && isFarEnoughLeft && isHighEnough)
+     isHitByPipe(pipeObstacle) {
+        // Check if bird rectangle overlaps with obstacle rectangle
+        let birdRight = this.x + this.width;
+        let birdBottom = this.y + this.height;
+        
+        let obstacleRight = pipeObstacle.topPipeBottomRight.x;
+        let obstacleBottom = pipeObstacle.topPipeBottomRight.y;
+        let obstacleLeft = pipeObstacle.topPipeTopLeft.x;
+        let obstacleTop = pipeObstacle.topPipeTopLeft.y;
+
+        // Check if rectangles overlap
+        if (this.x < obstacleRight && 
+            birdRight > obstacleLeft && 
+            this.y < obstacleBottom && 
+            birdBottom > obstacleTop) {
             return true;
+        }
         return false;  
     }
 
-
-        //use the logic above to detect for the bottom pipe here:
+    getsHitByPipe(pipeObstacle) {
+        // Check if bird rectangle overlaps with obstacle rectangle
+        let birdRight = this.x + this.width;
+        let birdBottom = this.y + this.height;
         
-        getsHitByPipe(pipeObstacle) {
-        let isInTheRight = this.x > pipeObstacle.bottomPipeTopLeft.x;
-        let isAtBottom = this.y > pipeObstacle.bottomPipeTopLeft.y;
-        let isInTheLeft = this.x < pipeObstacle.bottomPipeBottomRight.x;
-        let isHighUp = this.y < pipeObstacle.bottomPipeBottomRight.y;
+        let obstacleRight = pipeObstacle.bottomPipeBottomRight.x;
+        let obstacleBottom = pipeObstacle.bottomPipeBottomRight.y;
+        let obstacleLeft = pipeObstacle.bottomPipeTopLeft.x;
+        let obstacleTop = pipeObstacle.bottomPipeTopLeft.y;
 
-       
-
-         if(isInTheRight && isAtBottom && isInTheLeft && isHighUp)
+        // Check if rectangles overlap
+        if (this.x < obstacleRight && 
+            birdRight > obstacleLeft && 
+            this.y < obstacleBottom && 
+            birdBottom > obstacleTop) {
             return true;
+        }
         return false;
     }
 
