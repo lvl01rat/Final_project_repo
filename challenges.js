@@ -16,6 +16,7 @@ let titleScreen = new TitleScreen(canvas, pencil);
 let gameOverScreen = new GameOverScreen(canvas, pencil);
 let gameStarted = false;
 let gameOver = false;
+let explosionDelay = 0;
 let highScore = localStorage.getItem("flappyHighScore") || 0;
 
 let testPipe = new PipeObstacle(canvas, pencil);
@@ -36,6 +37,7 @@ function resetGame() {
     bird.x = 50;
     bird.currentPositionIndex = 1; 
     bird.y = bird.presetPositions[bird.currentPositionIndex];
+    bird.isExploding = false;
     score = 0;
     testPipe = new PipeObstacle(canvas, pencil);
     newPipe = new PipeObstacle(canvas, pencil);
@@ -83,14 +85,16 @@ function gameLoop() {
     let wasHit = bird.isHitByPipe(testPipe);
     if(wasHit) {
         console.log("you're dead, comrade!");
-        gameOver = true;
+        bird.explode();
+        explosionDelay = 10;
         updateHighScore();
     }
 
      let getHit = bird.getsHitByPipe(newPipe);
     if(getHit) {
         console.log("you're dead, comrade!");
-        gameOver = true;
+        bird.explode();
+        explosionDelay = 10;
         updateHighScore();
     } 
     
@@ -98,6 +102,13 @@ function gameLoop() {
             console.log("No cheating, comrade!");
             gameOver = true;
             updateHighScore();
+    }
+
+    if (explosionDelay > 0) {
+        explosionDelay--;
+        if (explosionDelay === 0) {
+            gameOver = true;
+        }
     }
 }
 

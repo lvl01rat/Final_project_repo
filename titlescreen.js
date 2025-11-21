@@ -17,12 +17,24 @@ export class TitleScreen {
         this.pencil.textBaseline = "middle";
         this.pencil.fillText("Belt Blitz", this.canvas.width / 2, this.canvas.height / 2 - 80);
 
+          // Draw controls tutorial
+        this.pencil.font = "bold 20px Arial";
+        this.pencil.fillStyle = "lightblue";
+        this.pencil.textAlign = "center";
+        this.pencil.fillText("CONTROLS", this.canvas.width / 2, this.canvas.height / 2 - 10);
+
+        this.pencil.font = "18px Arial";
+        this.pencil.fillStyle = "white";
+        this.pencil.fillText("W - Move Up", this.canvas.width / 2, this.canvas.height / 2 + 20);
+        this.pencil.fillText("S - Move Down", this.canvas.width / 2, this.canvas.height / 2 + 50);
+        this.pencil.fillText("Avoid the asteroids!", this.canvas.width / 2, this.canvas.height / 2 + 85);
+
         // Draw start button
         this.pencil.fillStyle = "white";
         this.pencil.strokeStyle = "white";
         this.pencil.lineWidth = 3;
         let buttonX = this.canvas.width / 2 - 75;
-        let buttonY = this.canvas.height / 2 + 50;
+        let buttonY = this.canvas.height / 2 + 130;
         let buttonWidth = 150;
         let buttonHeight = 50;
         
@@ -40,7 +52,7 @@ export class TitleScreen {
         
         // Check if click is on START button
         let buttonX = this.canvas.width / 2 - 75;
-        let buttonY = this.canvas.height / 2 + 50;
+        let buttonY = this.canvas.height / 2 + 130;
         let buttonWidth = 150;
         let buttonHeight = 50;
         

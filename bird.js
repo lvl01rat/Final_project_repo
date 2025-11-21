@@ -9,6 +9,7 @@ export class Bird {
 
    presetPositions = [];
     currentPositionIndex = 1;
+    isExploding = false;
 
     constructor(canvas, pencil) {
         this.canvas = canvas;
@@ -40,6 +41,10 @@ export class Bird {
         } else {
             this.pencil.drawImage(this.image, this.x, this.y, this.width, this.height);
         }
+    }
+
+    explode() {
+        this.isExploding = true;
     }
 
   moveUp() {
