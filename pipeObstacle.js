@@ -1,12 +1,12 @@
 export class PipeObstacle {
 
-    x = 300;
+    x = 500;
     y = 100;
     width = 50;  
     height = 50; 
     canvas;
     pencil;
-    speed = 8;
+    speed = 55;
 
     
     presetPositions = [];
@@ -34,6 +34,7 @@ export class PipeObstacle {
         
         this.currentPositionIndex = Math.floor(Math.random() * 3);
         this.y = this.presetPositions[this.currentPositionIndex];
+        this.updateCollisionBoxes();
     }
 
     draw() {
@@ -45,8 +46,9 @@ export class PipeObstacle {
             this.width,
             this.height
         );
+    }
 
-   
+   updateCollisionBoxes() {
         this.topPipeTopLeft = {
             x: this.x,
             y: this.y
@@ -70,13 +72,22 @@ export class PipeObstacle {
 
     move() {
         this.x -= this.speed;
+        this.updateCollisionBoxes();
 
         // Recycle pipes when it goes off screen
         if (this.x < -this.width) {
             this.x = this.canvas.width;
-            // Pick a new random preset position
-            this.currentPositionIndex = Math.floor(Math.random() * 3);
+           let newPosition;
+            do {
+                newPosition = Math.floor(Math.random() * 3);
+            } while (newPosition === PipeObstacle.otherObstaclePosition);
+            
+            this.currentPositionIndex = newPosition;
+            PipeObstacle.otherObstaclePosition = newPosition;
             this.y = this.presetPositions[this.currentPositionIndex];
+            this.updateCollisionBoxes();
         }
     }
 }
+
+PipeObstacle.otherObstaclePosition = -1;

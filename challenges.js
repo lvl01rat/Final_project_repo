@@ -18,6 +18,10 @@ let gameStarted = false;
 let gameOver = false;
 let highScore = localStorage.getItem("flappyHighScore") || 0;
 
+let testPipe = new PipeObstacle(canvas, pencil);
+let newPipe = new PipeObstacle(canvas, pencil);
+
+
 PipeObstacle.otherObstaclePosition = testPipe.currentPositionIndex;
 newPipe.currentPositionIndex = Math.floor(Math.random() * 3);
 while (newPipe.currentPositionIndex === testPipe.currentPositionIndex) {
@@ -30,11 +34,12 @@ newPipe.y = newPipe.presetPositions[newPipe.currentPositionIndex];
 function resetGame() {
     console.log("resetting game")
     bird.x = 50;
-    bird.y = 50;
+    bird.currentPositionIndex = 1; 
+    bird.y = bird.presetPositions[bird.currentPositionIndex];
     score = 0;
     testPipe = new PipeObstacle(canvas, pencil);
     newPipe = new PipeObstacle(canvas, pencil);
-    newPipe.x = canvas.width + 400;
+  
 
      PipeObstacle.otherObstaclePosition = testPipe.currentPositionIndex;
     newPipe.currentPositionIndex = Math.floor(Math.random() * 3);
@@ -75,14 +80,14 @@ function gameLoop() {
     
     bird.draw();
 
-    let wasHit = bird.isHitByPipe(testPipe, newPipe);
+    let wasHit = bird.isHitByPipe(testPipe);
     if(wasHit) {
         console.log("you're dead, comrade!");
         gameOver = true;
         updateHighScore();
     }
 
-     let getHit = bird.getsHitByPipe(testPipe, newPipe);
+     let getHit = bird.getsHitByPipe(newPipe);
     if(getHit) {
         console.log("you're dead, comrade!");
         gameOver = true;
@@ -155,10 +160,6 @@ function detectKey(event) {
 canvas.addEventListener("click", detectClick);
 document.addEventListener("keypress", detectKey)
 
-let testPipe = new PipeObstacle(canvas, pencil);
-testPipe.draw();
 
-let newPipe = new PipeObstacle(canvas, pencil);
-newPipe.draw();
 
 let bird = new Bird(canvas, pencil);

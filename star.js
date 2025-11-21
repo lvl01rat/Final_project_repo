@@ -22,7 +22,7 @@ export class Star {
     
  //recycle stars/restart stars
     move() {
-        this.x -= 5;
+        this.x -= 20;
         if (this.x < 0) this.x = this.canvas.width;
         if (this.x > this.canvas.width) this.x = 0;
         if (this.y < 0) this.y = this.canvas.height;

@@ -1,7 +1,7 @@
 export class Bird {
     
     x = 50;
-    y = 50;
+    y = 45;
     width = 50;
     height = 50;
     canvas;
@@ -23,10 +23,23 @@ export class Bird {
         this.y = this.presetPositions[this.currentPositionIndex];
         this.image = new Image();
         this.image.src = "sprites/bird.webp"
+
+         this.explosionImage = new Image();
+        this.explosionImage.src = "sprites/explode.gif"; // Change to your explosion sprite filename
     }
 
     draw() {
-      this.pencil.drawImage(this.image, this.x, this.y, this.width, this.height);
+    if (this.isExploding) {
+            this.pencil.drawImage(
+                this.explosionImage,
+                this.x,
+                this.y,
+                this.width,
+                this.height
+            );
+        } else {
+            this.pencil.drawImage(this.image, this.x, this.y, this.width, this.height);
+        }
     }
 
   moveUp() {
